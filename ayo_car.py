@@ -1,6 +1,15 @@
 import RPi.GPIO as GPIO
 import Adafruit_PCA9685 #import the library used to communicate with servo
 import time
+import threading
+import curses
+
+# Get the curses window, turn off echoing of keyboard to screen, turn on
+# instant (no waiting) key response, and use special values for cursor keys
+screen = curses.initscr()
+curses.noecho() 
+curses.cbreak()
+screen.keypad(True)
 #servo
 pwm = Adafruit_PCA9685.PCA9685() #instantiate the objct used to control PWM
 pwm.set_pwm_freq(50) #frequecy of pwm signal (servo specific)
@@ -291,65 +300,45 @@ def test():
 	all_lights_on()
 	move(speed_set, 'forward', 'no', 0.5)
 
+
+speed_set = 30
+setup()
+light_setup()
+wheel_reset()
+head_reset()
+
+
+
 try:
-	speed_set = 60
-	setup()
-	light_setup()
-	wheel_reset()
-	head_reset()
-
 	while True:
-		test()
-
-		'''
-		distance = check_dist()
-		print(distance)
-		time.sleep(0.5)
-		#shake_body()
-		if distance > 0.7:
-			move(speed_set, 'forward', 'no', 0.5)
-		else:
+		char = screen.getch()
+		if char == ord('q'):
+			break
+		elif char  == curses.KEY_UP:
+			print("forward")
+			wheel_reset()
+			move(speed_set, 'forward', 'no', 10)
+		elif char  == curses.KEY_DOWN:
+			print("backward")
+			wheel_reset()
+			move(speed_set, 'backward', 'no', 10)
+		elif char  == curses.KEY_LEFT:
+			print("left")
+			#indicate("left")
+			left_indicator_thread = threading.Thread(target = indicate, args = ("left",))
+			left_indicator_thread.start()
+			turn_left()
+		elif char  == curses.KEY_RIGHT:
+			print("right")
+			#indicate("right")
+			right_indicator_thread = threading.Thread(target = indicate, args = ("right",))
+			right_indicator_thread.start()
+			turn_right()
+		elif char == 10:
+			print("stop")
+			wheel_reset()
 			motorStop()
-			move(speed_set, 'backward', 'no', 0.2)
-			time.sleep(1)
-			motorStop()
-			look_left()
-			left_distance = check_dist()
-			head_reset()
-			look_right()
-			right_distance = check_dist()
-			head_reset()
-			if left_distance > right_distance:
-				indicate('left')
-				turn_left()
-				move(speed_set, 'forward', 'no', 1)
-				time.sleep(0.8)
-				motorStop()
-				wheel_reset()
-			else:
-				indicate('right')
-				turn_right()
-				move(speed_set, 'forward', 'no', 1)
-				time.sleep(0.8)
-				motorStop()
-				wheel_reset()
-			'''
-		#all_lights_on()
-		#time.sleep(2)
-		#all_lights_off()
-		#turn_left()
-		#look_left()
-		#look_up()
-
-		'''
-		speed_set = 60
-		setup()
-		move(speed_set, 'forward', 'no', 0.8)
-		time.sleep(3)
-		motorStop()
-		destroy()
-		'''
-except KeyboardInterrupt:
-	GPIO.cleanup()
-	destroy()
-
+finally:
+	#Close down curses properly, inc turn echo back on!
+	curses.nocbreak(); screen.keypad(0); curses.echo()
+	curses.endwin()

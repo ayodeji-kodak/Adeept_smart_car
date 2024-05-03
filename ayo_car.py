@@ -169,34 +169,34 @@ def wheel_reset():
 	time.sleep(1)
 
 def look_left():
-	pwm.set_pwm(1,0,450)
+	pwm.set_pwm(1,0,400)
 	time.sleep(1)
 	#pwm.set_pwm(1,0,330)
 	#time.sleep(1)
 
 
 def look_right():
-	pwm.set_pwm(1,0,200)
+	pwm.set_pwm(1,0,270)
 	time.sleep(1)
 	#pwm.set_pwm(1,0,330)
 	#time.sleep(1)
 
 def look_up():
-	pwm.set_pwm(2,0,450)
+	pwm.set_pwm(2,0,300)
 	time.sleep(1)
-	pwm.set_pwm(2,0,350)
-	time.sleep(1)
+	#pwm.set_pwm(2,0,350)
+	#time.sleep(1)
 
 def look_down():
-	pwm.set_pwm(2,0,280)
+	pwm.set_pwm(2,0,210)
 	time.sleep(1)
-	pwm.set_pwm(2,0,350)
-	time.sleep(1)
+	#pwm.set_pwm(2,0,350)
+	#time.sleep(1)
 
 def head_reset():
-	pwm.set_pwm(1,0,330)
+	pwm.set_pwm(1,0,340)
 	time.sleep(1)
-	pwm.set_pwm(2,0,350)
+	pwm.set_pwm(2,0,250)
 	time.sleep(1)
 
 def check_dist():       #Reading distance
@@ -306,9 +306,13 @@ setup()
 light_setup()
 wheel_reset()
 head_reset()
-
-
-
+'''
+look_left()
+look_right()
+look_up()
+look_down()
+head_reset()
+'''
 try:
 	while True:
 		char = screen.getch()
